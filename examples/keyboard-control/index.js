@@ -6,9 +6,10 @@
  */
 
 const keypress = require('keypress')
-const { NearestScanner } = require('@toio/scanner')
+// const { NearestScanner } = require('@toio/scanner')
+const { NearScanner } = require('@toio/scanner')
 
-const DURATION = 700 // ms
+const DURATION = 200 // ms
 const SPEED = {
   forward: [70, 70],
   backward: [-70, -70],
@@ -18,10 +19,13 @@ const SPEED = {
 
 async function main() {
   // start a scanner to find nearest cube
-  const cube = await new NearestScanner().start()
+  // const cube = await new NearestScanner().start()
+  const cubes = await new NearScanner(2).start()
 
   // connect to the cube
-  await cube.connect()
+  // await cube.connect()
+  const cube1 = await cubes[0].connect()
+  const cube2 = await cubes[1].connect()
 
   keypress(process.stdin)
   process.stdin.on('keypress', (ch, key) => {
@@ -32,16 +36,24 @@ async function main() {
 
     switch (key.name) {
       case 'up':
-        cube.move(...SPEED.forward, DURATION)
+        // cube.move(...SPEED.forward, DURATION)
+        cube1.move(...SPEED.forward, DURATION)
+        cube2.move(...SPEED.forward, DURATION)
         break
       case 'down':
-        cube.move(...SPEED.backward, DURATION)
+        // cube.move(...SPEED.backward, DURATION)
+        cube1.move(...SPEED.backward, DURATION)
+        cube2.move(...SPEED.backward, DURATION)
         break
       case 'left':
-        cube.move(...SPEED.left, DURATION)
+        // cube.move(...SPEED.left, DURATION)
+        cube1.move(...SPEED.left, DURATION)
+        cube2.move(...SPEED.left, DURATION)
         break
       case 'right':
-        cube.move(...SPEED.right, DURATION)
+        // cube.move(...SPEED.right, DURATION)
+        cube1.move(...SPEED.right, DURATION)
+        cube2.move(...SPEED.right, DURATION)
         break
     }
   })
