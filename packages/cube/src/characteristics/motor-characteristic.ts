@@ -53,6 +53,34 @@ export class MotorCharacteristic {
     }
   }
 
+  public moveTo(x: number, y: number, duration: number): Promise<void> | void {
+    if (this.timer) {
+      clearTimeout(this.timer)
+      this.timer = null
+    }
+
+    if (this.pendingResolve) {
+      this.pendingResolve()
+      this.pendingResolve = null
+    }
+
+    const data = this.spec.moveTo(x, y, duration)
+    this.characteristic.write(Buffer.from(data.buffer), false)
+
+    if (data.data.duration > 0) {
+      return new Promise(resolve => {
+        this.pendingResolve = resolve
+        this.timer = setTimeout(() => {
+          if (this.pendingResolve) {
+            this.pendingResolve()
+            this.pendingResolve = null
+          }
+        }, data.data.duration)
+      })
+    }
+
+  }
+
   public stop(): void {
     this.move(0, 0, 0)
   }

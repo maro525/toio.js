@@ -128,6 +128,20 @@ export class Cube {
       ? this.motorCharacteristic.move(left, right, duration)
       : missingCharacteristicRejection()
   }
+  
+  /**
+   * Cube Move To Specific Position
+   * 
+   * @param x - [45, 455] 
+   * @param y - [45, 455]
+   * @param durationMs - [0, 2550]
+   * @returns Promise object
+   */
+  public moveTo(x: number, y: number, duration: number = 0): Promise<void> | void {
+    return this.motorCharacteristic !== null 
+      ? this.motorCharacteristic.moveTo(x, y, duration) 
+      : missingCharacteristicRejection()
+  }
 
   /**
    * Stop cube movement
