@@ -137,9 +137,9 @@ export class Cube {
    * @param durationMs - [0, 2550]
    * @returns Promise object
    */
-  public moveTo(x: number, y: number, duration: number = 0): Promise<void> | void {
+  public moveTo(x: number, y: number, r: number=90): Promise<void> | void {
     return this.motorCharacteristic !== null 
-      ? this.motorCharacteristic.moveTo(x, y, duration) 
+      ? this.motorCharacteristic.moveTo(x, y, r) 
       : missingCharacteristicRejection()
   }
 
@@ -250,6 +250,17 @@ export class Cube {
   public getCollisionStatus(): Promise<{ isCollisionDetected: boolean }> {
     return this.sensorCharacteristic !== null
       ? this.sensorCharacteristic.getCollisionStatus()
+      : missingCharacteristicRejection()
+  }
+
+  /**
+   * Get DoubleTap status
+   * 
+   *  @retusns Promise object
+   */
+  public getDoubleTapStatus(): Promise<{ isDoubleTapped: boolean }> {
+    return this.sensorCharacteristic != null
+      ? this.sensorCharacteristic.getDoubleTapStatus()
       : missingCharacteristicRejection()
   }
 

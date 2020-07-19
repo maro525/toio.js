@@ -42,16 +42,32 @@ export class MotorSpec {
     }
   }
 
-  public moveTo(x: number, y: number, duration: number = 5000): MoveToType {
-    const label = 0
-    const timeout = duration
-    const movetype = 0
-    const maxspeed = 0x50
+  public moveTo(x: number, y: number, r: number, speed: number=0x10): MoveToType {
+    const timeout = 0x05 
+    const movetype = 2
+    const maxspeed = speed
     const speedtype = 0
-    const r = 0x05
+    const rr = r.toString(16).replace(/(^[0-9a-f]{1}$)/, '00$1')
+    const angle = parseInt(rr, 16)
+    if(angle == 0){
+      console.log("yes")
+    }
+
+    const buf = Buffer.alloc(13)
+    buf.writeUInt8(3, 0)
+    buf.writeUInt8(0, 1)
+    buf.writeUInt8(timeout, 2)
+    buf.writeUInt8(movetype, 3)
+    buf.writeUInt8(maxspeed, 4)
+    buf.writeUInt8(speedtype, 5)
+    buf.writeUInt8(0, 6)
+    buf.writeUInt16LE(x, 7)
+    buf.writeUInt16LE(y, 9)
+    // buf.writeUInt16LE(angle, 11)
+    buf.writeUInt16LE(0x0500, 11)
 
     return {
-      buffer: Buffer.from([3, label, timeout, movetype, maxspeed, speedtype, 0, x, 0, y, 0, r]),
+      buffer: buf,
       data: {
         posX: x,
         posY: y,

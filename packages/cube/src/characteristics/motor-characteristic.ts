@@ -53,7 +53,7 @@ export class MotorCharacteristic {
     }
   }
 
-  public moveTo(x: number, y: number, duration: number): Promise<void> | void {
+  public moveTo(x: number, y: number, r:number): Promise<void> | void {
     if (this.timer) {
       clearTimeout(this.timer)
       this.timer = null
@@ -64,7 +64,7 @@ export class MotorCharacteristic {
       this.pendingResolve = null
     }
 
-    const data = this.spec.moveTo(x, y, duration)
+    const data = this.spec.moveTo(x, y, r)
     this.characteristic.write(Buffer.from(data.buffer), false)
 
     if (data.data.duration > 0) {
