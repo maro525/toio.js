@@ -16,6 +16,7 @@ import { DataType, SensorSpec } from './specs/sensor-spec'
 export interface Event {
   'sensor:slope': (data: { isSloped: boolean }) => void
   'sensor:collision': (data: { isCollisionDetected: boolean }) => void
+  'sensor:doubletap': (data: { isDoubleTapped: boolean }) => void
 }
 
 /**
@@ -30,9 +31,10 @@ export class SensorCharacteristic {
 
   private readonly spec: SensorSpec = new SensorSpec()
 
-  private prevStatus: { isSloped?: boolean; isCollisionDetected?: boolean } = {
+  private prevStatus: { isSloped?: boolean; isCollisionDetected?: boolean; isDoubleTapped?: boolean } = {
     isSloped: undefined,
     isCollisionDetected: undefined,
+    isDoubleTapped: undefined,
   }
 
   public constructor(characteristic: Characteristic, eventEmitter: EventEmitter) {
@@ -54,6 +56,12 @@ export class SensorCharacteristic {
   public getCollisionStatus(): Promise<{ isCollisionDetected: boolean }> {
     return this.read().then(parsedData => {
       return { isCollisionDetected: parsedData.data.isCollisionDetected }
+    })
+  }
+
+  public getDoubleTapStatus(): Promise<{ isDoubleTapped: boolean }> {
+    return this.read().then(parseData => {
+      return { isDoubleTapped: parseData.data.isDoubleTapped }
     })
   }
 
@@ -89,6 +97,11 @@ export class SensorCharacteristic {
       }
       if (this.prevStatus.isCollisionDetected !== parsedData.data.isCollisionDetected) {
         this.eventEmitter.emit('sensor:collision', { isCollisionDetected: parsedData.data.isCollisionDetected })
+      }
+      if (this.prevStatus.isDoubleTapped != parsedData.data.isDoubleTapped) {
+        this.eventEmitter.emit('sensor:doubletap', {
+          isDoubleTapped: parsedData.data.isDoubleTapped 
+        })
       }
       this.prevStatus = parsedData.data
     } catch (e) {
